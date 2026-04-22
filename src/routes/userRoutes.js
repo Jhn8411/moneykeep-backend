@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const authMiddleware = require('../middlewares/authMiddleware'); // O middleware que checa o Token
 
-// Rota de Cadastro
+// Rotas Públicas (Não precisam de token)
 router.post('/register', userController.register);
-
-// Nova Rota de Login (Ex: http://localhost:3000/api/users/login)
 router.post('/login', userController.login);
+
+// Rotas Protegidas (Precisam do token enviado no Header)
+// Usamos PUT para atualizar e DELETE para apagar
+router.put('/', authMiddleware, userController.updateName);
+router.delete('/', authMiddleware, userController.deleteAccount);
 
 module.exports = router;

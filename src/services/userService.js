@@ -1,9 +1,29 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Adicionamos a importação do JWT
+const db = require('../config/db');
 const userRepository = require('../repositories/userRepository');
 
 const registerUser = async (name, email, password) => {
-  // ... (mantenha o código do registerUser exatamente como estava)
+  // 1. Verifica se o e-mail já existe no banco de dados
+  const userExists = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+
+  if (userExists.rows.length > 0) {
+    // Lança um erro que será capturado lá pelo userController
+    throw new Error('E-mail já cadastrado.');
+  }
+
+  // 2. Criptografa a senha para segurança (Hashing)
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // 3. Insere o novo usuário na tabela, salvando a senha criptografada
+  const result = await db.query(
+    'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
+    [name, email, hashedPassword]
+  );
+
+  // 4. Retorna os dados do usuário criados (sem a senha, por segurança)
+  return result.rows[0];
 };
 
 const loginUser = async (email, password) => {
