@@ -24,7 +24,7 @@ app.use(helmet({
 const corsOptions = {
   // Adicionei a porta 5173 (padrão do Vite) por garantia. 
   // O seu front-end deve estar rodando exatamente em um desses endereços!
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'https://seusiteoficial.com.br', 'https://moneykeep.vercel.app'],
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'https://seusiteoficial.com.br', 'moneykeep-dinheirointeligente.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
